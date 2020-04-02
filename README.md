@@ -1,5 +1,5 @@
 # ZS-BERT
-Officail implementation of "ZS-BERT: Towards Zero-Shot Learning on Relation Extraction"
+Official implementation of "ZS-BERT: Towards Zero-Shot Learning on Relation Extraction"
 
 # DataSet
 You can download the datasets present in our work from the original link:
