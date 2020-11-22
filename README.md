@@ -3,8 +3,9 @@ This repository contains the implementation of the paper "Towards Zero-Shot Rela
 
 # DataSet
 You can download the datasets employed in our work from the following link:
-- [WikiZSL](https://www.informatik.tu-darmstadt.de/ukp/research_6/data/lexical_resources/wikipedia_wikidata_relations/index.en.jsp)
-- [FewRel](https://thunlp.github.io/1/fewrel1.html])
+- [WikiZSL](https://drive.google.com/file/d/1Ju5ngSL9Bpb7K0br11ocyPWzDA8N5-9v/view?usp=sharing)
+- [FewRel](https://drive.google.com/file/d/1q_q1TA-c_xSCj0-CscWxmvvExr46ZcQS/view?usp=sharing)
+
 and place them to the `data` folder.
 
 # Structure
