@@ -32,18 +32,28 @@ train_label = list(i['edgeSet'][0]['kbID'] for i in training_data)
 
 pid, count = np.unique(train_label, return_counts=True)
 pid2cnt = dict(zip(pid, count))
-test_relation = random.sample(list(pid2cnt), k=args.m)
-training_data, test_data = data_helper.split_wiki_data(training_data, test_relation)
-print('train size: {}, test size: {}'. format(len(training_data), len(test_data)))
+sampled_relation = random.sample(list(pid2cnt), k=(args.m+5))
+val_relation = sampled_relation[:5]
+test_relation = sampled_relation[5:]
+training_data, dev_data, test_data = data_helper.split_wiki_data(training_data, val_relation, test_relation)
+print('train size: {}, dev size: {}, test size: {}'.format(len(training_data), len(dev_data), len(test_data)))
 
 train_label = list(i['edgeSet'][0]['kbID'] for i in training_data)
+val_label = list(i['edgeSet'][0]['kbID'] for i in dev_data)
 test_label = list(i['edgeSet'][0]['kbID'] for i in test_data)
 
 print('there are {} kinds of relation in train.'.format(len(set(train_label))))
+print('there are {} kinds of relation in dev.'.format(len(set(val_label))))
 print('there are {} kinds of relation in test.'.format(len(set(test_label))))
+print('number of union of train and dev: {}'.format(len(set(train_label) & set(val_label))))
+print('number of union of dev and test: {}'.format(len(set(val_label) & set(test_label))))
 print('number of union of train and test: {}'.format(len(set(train_label) & set(test_label))))
 
-property2idx, idx2property, pid2vec = data_helper.generate_attribute(train_label, test_label)
+property2idx, idx2property, pid2vec = data_helper.generate_attribute(train_label, val_label, test_label)
+
+print(len(training_data))
+print(len(dev_data))
+print(len(test_data))
 
 bertconfig = BertConfig.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad',
                                         num_labels=len(set(train_label)),
@@ -62,22 +72,38 @@ model = model.to(device)
 trainset = data_helper.WikiDataset('train', training_data, pid2vec, property2idx)
 trainloader = DataLoader(trainset, batch_size=args.batch_size, collate_fn=data_helper.create_mini_batch, shuffle=True)
 
-test_y_attr = []
-test_y = []
-test_idxmap = {}
+val_y_attr, test_y_attr = [], []
+val_y, test_y = [], []
+val_idxmap, test_idxmap = {}, {}
 
+for i, dev in enumerate(dev_data):
+    property_kbid = dev['edgeSet'][0]['kbID']
+    label = int(property2idx[property_kbid])
+    val_y.append(label)
+    val_idxmap[i] = label
+    
 for i, test in enumerate(test_data):
     property_kbid = test['edgeSet'][0]['kbID']
     label = int(property2idx[property_kbid])
     test_y.append(label)
     test_idxmap[i] = label
 
+val_y_attr = list(pid2vec[i] for i in set(val_label))    
+val_y_attr = np.array(val_y_attr)
+val_y = np.array(val_y)
+
 test_y_attr = list(pid2vec[i] for i in set(test_label))    
 test_y_attr = np.array(test_y_attr)
 test_y = np.array(test_y)
 
+print(val_y_attr.shape)
+print(val_y.shape)
 print(test_y_attr.shape)
 print(test_y.shape)
+
+devset = data_helper.WikiDataset('dev', dev_data, pid2vec, property2idx)
+devloader = DataLoader(devset, batch_size=256, 
+                        collate_fn=data_helper.create_mini_batch)
 
 testset = data_helper.WikiDataset('test', test_data, pid2vec, property2idx)
 testloader = DataLoader(testset, batch_size=256, 
@@ -120,13 +146,19 @@ for epoch in range(args.epochs):
         if step % 1000 == 0:
             print(f'[step {step}]' + '=' * (step//1000))
     print(f'train acc: {correct/total}')
-    print('============== EVALUATION ON TESTING DATA ==============')
-    preds = extract_relation_emb(model, testloader).cpu().numpy()
-    p, r, f1 = evaluate(preds, test_y_attr, test_y, test_idxmap, len(set(train_label)), args.dist_func)
+    print('============== EVALUATION ON DEV DATA ==============')
+    preds = extract_relation_emb(model, devloader).cpu().numpy()
+    p, r, f1 = evaluate(preds, val_y_attr, val_y, val_idxmap, len(set(train_label)), args.dist_func)
     print(f'loss: {running_loss:.2f}, precision: {p:.4f}, recall: {r:.4f}, f1 score: {f1:.4f}')
+
+    print('============== EVALUATION ON TEST DATA ==============')
+    preds = extract_relation_emb(model, testloader).cpu().numpy()
+    pt, rt, f1t = evaluate(preds, test_y_attr, test_y, test_idxmap, len(set(train_label))+len(set(val_label)), args.dist_func)
+    print(f'[testing performance] precision: {pt:.4f}, recall: {rt:.4f}, f1 score: {f1t:.4f}')
+
     if f1 > best_f1:
         best_p = p
         best_r = r
         best_f1 = f1
-        torch.save(model, 'best_model_disimilar.th')
-    print(f'[best] precision: {best_p:.4f}, recall: {best_r:.4f}, f1 score: {best_f1:.4f}')
+        torch.save(model, f'best_f1_{best_f1}_wiki_epoch_{epoch}_m_{args.m}_alpha_{args.alpha}_gamma_{args.gamma}')
+    print(f'[best val] precision: {best_p:.4f}, recall: {best_r:.4f}, f1 score: {best_f1:.4f}')

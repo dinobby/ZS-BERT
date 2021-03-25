@@ -37,17 +37,19 @@ def load_datas(json_files, val_portion=0.0, load_vertices=True):
 def load_data(json_file, val_portion=0.0, load_vertices=True):
     return load_datas([json_file], val_portion, load_vertices)
 
-def split_wiki_data(data, mask_relation):
-    train_data, test_data = [], []
+def split_wiki_data(data, dev_relation, test_relation):
+    train_data, dev_data, test_data = [], [], []
     for i in data:
         kbID = i['edgeSet'][0]['kbID']
-        if kbID not in mask_relation:
+        if kbID not in dev_relation and kbID not in test_relation:
             train_data.append(i)
-        else:
+        elif kbID in dev_relation:
+            dev_data.append(i)
+        elif kbID in test_relation:
             test_data.append(i)
-    return train_data, test_data
+    return train_data, dev_data, test_data
 
-def generate_attribute(train_label, test_label, att_dim=1024, prop_list_path='../resources/property_list.html'):
+def generate_attribute(train_label, dev_label, test_label, att_dim=1024, prop_list_path='../resources/property_list.html'):
     from sentence_transformers import SentenceTransformer
     property2idx = {}
     idx2property = {}
@@ -56,7 +58,10 @@ def generate_attribute(train_label, test_label, att_dim=1024, prop_list_path='..
         property2idx[i] = idx
         idx2property[idx] = i
         idx += 1
-
+    for i in set(dev_label):
+        property2idx[i] = idx
+        idx2property[idx] = i
+        idx += 1
     for i in set(test_label):
         property2idx[i] = idx
         idx2property[idx] = i
@@ -125,7 +130,7 @@ def create_mini_batch(samples):
 
 class WikiDataset(Dataset):
     def __init__(self, mode, data, pid2vec, property2idx):
-        assert mode in ['train', 'test']
+        assert mode in ['train', 'dev', 'test']
         self.mode = mode
         self.data = data
         self.pid2vec = pid2vec
@@ -151,7 +156,7 @@ class WikiDataset(Dataset):
         if self.mode == 'train':
             label = int(self.property2idx[property_kbid])
             label_tensor = torch.tensor(label)
-        elif self.mode == 'test':
+        elif self.mode == 'test' or self.mode == 'dev':
             label_tensor = None
             
         return (tokens_tensor, segments_tensor, marked_e1, marked_e2, relation_emb, label_tensor)
@@ -161,7 +166,7 @@ class WikiDataset(Dataset):
 
 class FewRelDataset(Dataset):
     def __init__(self, mode, data, pid2vec, property2idx):
-        assert mode in ['train', 'test']
+        assert mode in ['train', 'dev', 'test']
         self.mode = mode
         self.data = data
         self.pid2vec = pid2vec
@@ -184,7 +189,7 @@ class FewRelDataset(Dataset):
         if self.mode == 'train':
             label = int(self.property2idx[g['relation']])
             label_tensor = torch.tensor(label)
-        elif self.mode == 'test':
+        elif self.mode == 'test' or self.mode == 'dev':
             label_tensor = None
             
         return (tokens_tensor, segments_tensor, marked_e1, marked_e2, relation_emb, label_tensor)

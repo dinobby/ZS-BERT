@@ -1,0 +1,308 @@
+/home/dinobby/.local/lib/python3.6/site-packages/tensorflow/python/framework/dtypes.py:516: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint8 = np.dtype([("qint8", np.int8, 1)])
+/home/dinobby/.local/lib/python3.6/site-packages/tensorflow/python/framework/dtypes.py:517: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint8 = np.dtype([("quint8", np.uint8, 1)])
+/home/dinobby/.local/lib/python3.6/site-packages/tensorflow/python/framework/dtypes.py:518: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint16 = np.dtype([("qint16", np.int16, 1)])
+/home/dinobby/.local/lib/python3.6/site-packages/tensorflow/python/framework/dtypes.py:519: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint16 = np.dtype([("quint16", np.uint16, 1)])
+/home/dinobby/.local/lib/python3.6/site-packages/tensorflow/python/framework/dtypes.py:520: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint32 = np.dtype([("qint32", np.int32, 1)])
+/home/dinobby/.local/lib/python3.6/site-packages/tensorflow/python/framework/dtypes.py:525: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  np_resource = np.dtype([("resource", np.ubyte, 1)])
+Loaded data size: 93483
+train size: 80841, dev size: 4476, test size: 8166
+there are 98 kinds of relation in train.
+there are 5 kinds of relation in dev.
+there are 10 kinds of relation in test.
+number of union of train and dev: 0
+number of union of dev and test: 0
+number of union of train and test: 0
+80841
+4476
+8166
+device: cuda:0
+(5, 1024)
+(4476,)
+(10, 1024)
+(8166,)
+============== TRAIN ON THE 1-th EPOCH ==============
+[step 0]
+[step 1000]=
+[step 2000]==
+[step 3000]===
+[step 4000]====
+[step 5000]=====
+[step 6000]======
+[step 7000]=======
+[step 8000]========
+[step 9000]=========
+[step 10000]==========
+[step 11000]===========
+[step 12000]============
+[step 13000]=============
+[step 14000]==============
+[step 15000]===============
+[step 16000]================
+[step 17000]=================
+[step 18000]==================
+[step 19000]===================
+[step 20000]====================
+train acc: 0.3189841788201531
+============== EVALUATION ON DEV DATA ==============
+loss: 113737.53, precision: 0.4823, recall: 0.5016, f1 score: 0.4918
+============== EVALUATION ON TEST DATA ==============
+[testing performance] precision: 0.2436, recall: 0.3092, f1 score: 0.2725
+[best val] precision: 0.4823, recall: 0.5016, f1 score: 0.4918
+============== TRAIN ON THE 2-th EPOCH ==============
+[step 0]
+[step 1000]=
+[step 2000]==
+[step 3000]===
+[step 4000]====
+[step 5000]=====
+[step 6000]======
+[step 7000]=======
+[step 8000]========
+[step 9000]=========
+[step 10000]==========
+[step 11000]===========
+[step 12000]============
+[step 13000]=============
+[step 14000]==============
+[step 15000]===============
+[step 16000]================
+[step 17000]=================
+[step 18000]==================
+[step 19000]===================
+[step 20000]====================
+train acc: 0.6429534518375577
+============== EVALUATION ON DEV DATA ==============
+loss: 45856.81, precision: 0.5683, recall: 0.5398, f1 score: 0.5537
+============== EVALUATION ON TEST DATA ==============
+[testing performance] precision: 0.3108, recall: 0.3395, f1 score: 0.3245
+[best val] precision: 0.5683, recall: 0.5398, f1 score: 0.5537
+============== TRAIN ON THE 3-th EPOCH ==============
+[step 0]
+[step 1000]=
+[step 2000]==
+[step 3000]===
+[step 4000]====
+[step 5000]=====
+[step 6000]======
+[step 7000]=======
+[step 8000]========
+[step 9000]=========
+[step 10000]==========
+[step 11000]===========
+[step 12000]============
+[step 13000]=============
+[step 14000]==============
+[step 15000]===============
+[step 16000]================
+[step 17000]=================
+[step 18000]==================
+[step 19000]===================
+[step 20000]====================
+train acc: 0.7359755569574844
+============== EVALUATION ON DEV DATA ==============
+loss: 31547.48, precision: 0.5509, recall: 0.5485, f1 score: 0.5497
+============== EVALUATION ON TEST DATA ==============
+[testing performance] precision: 0.3097, recall: 0.2920, f1 score: 0.3006
+[best val] precision: 0.5683, recall: 0.5398, f1 score: 0.5537
+============== TRAIN ON THE 4-th EPOCH ==============
+[step 0]
+[step 1000]=
+[step 2000]==
+[step 3000]===
+[step 4000]====
+[step 5000]=====
+[step 6000]======
+[step 7000]=======
+[step 8000]========
+[step 9000]=========
+[step 10000]==========
+[step 11000]===========
+[step 12000]============
+[step 13000]=============
+[step 14000]==============
+[step 15000]===============
+[step 16000]================
+[step 17000]=================
+[step 18000]==================
+[step 19000]===================
+[step 20000]====================
+train acc: 0.7808785146151087
+============== EVALUATION ON DEV DATA ==============
+loss: 23893.48, precision: 0.6134, recall: 0.6068, f1 score: 0.6101
+============== EVALUATION ON TEST DATA ==============
+[testing performance] precision: 0.3578, recall: 0.3357, f1 score: 0.3464
+[best val] precision: 0.6134, recall: 0.6068, f1 score: 0.6101
+============== TRAIN ON THE 5-th EPOCH ==============
+[step 0]
+[step 1000]=
+[step 2000]==
+[step 3000]===
+[step 4000]====
+[step 5000]=====
+[step 6000]======
+[step 7000]=======
+[step 8000]========
+[step 9000]=========
+[step 10000]==========
+[step 11000]===========
+[step 12000]============
+[step 13000]=============
+[step 14000]==============
+[step 15000]===============
+[step 16000]================
+[step 17000]=================
+[step 18000]==================
+[step 19000]===================
+[step 20000]====================
+train acc: 0.8114570576811272
+============== EVALUATION ON DEV DATA ==============
+loss: 19964.66, precision: 0.4970, recall: 0.5063, f1 score: 0.5016
+============== EVALUATION ON TEST DATA ==============
+[testing performance] precision: 0.3109, recall: 0.2832, f1 score: 0.2964
+[best val] precision: 0.6134, recall: 0.6068, f1 score: 0.6101
+============== TRAIN ON THE 6-th EPOCH ==============
+[step 0]
+[step 1000]=
+[step 2000]==
+[step 3000]===
+[step 4000]====
+[step 5000]=====
+[step 6000]======
+[step 7000]=======
+[step 8000]========
+[step 9000]=========
+[step 10000]==========
+[step 11000]===========
+[step 12000]============
+[step 13000]=============
+[step 14000]==============
+[step 15000]===============
+[step 16000]================
+[step 17000]=================
+[step 18000]==================
+[step 19000]===================
+[step 20000]====================
+train acc: 0.8320283024702811
+============== EVALUATION ON DEV DATA ==============
+loss: 17153.36, precision: 0.5669, recall: 0.5384, f1 score: 0.5523
+============== EVALUATION ON TEST DATA ==============
+[testing performance] precision: 0.3054, recall: 0.3324, f1 score: 0.3183
+[best val] precision: 0.6134, recall: 0.6068, f1 score: 0.6101
+============== TRAIN ON THE 7-th EPOCH ==============
+[step 0]
+[step 1000]=
+[step 2000]==
+[step 3000]===
+[step 4000]====
+[step 5000]=====
+[step 6000]======
+[step 7000]=======
+[step 8000]========
+[step 9000]=========
+[step 10000]==========
+[step 11000]===========
+[step 12000]============
+[step 13000]=============
+[step 14000]==============
+[step 15000]===============
+[step 16000]================
+[step 17000]=================
+[step 18000]==================
+[step 19000]===================
+[step 20000]====================
+train acc: 0.8486411598075234
+============== EVALUATION ON DEV DATA ==============
+loss: 15336.43, precision: 0.5652, recall: 0.5449, f1 score: 0.5549
+============== EVALUATION ON TEST DATA ==============
+[testing performance] precision: 0.3104, recall: 0.3008, f1 score: 0.3056
+[best val] precision: 0.6134, recall: 0.6068, f1 score: 0.6101
+============== TRAIN ON THE 8-th EPOCH ==============
+[step 0]
+[step 1000]=
+[step 2000]==
+[step 3000]===
+[step 4000]====
+[step 5000]=====
+[step 6000]======
+[step 7000]=======
+[step 8000]========
+[step 9000]=========
+[step 10000]==========
+[step 11000]===========
+[step 12000]============
+[step 13000]=============
+[step 14000]==============
+[step 15000]===============
+[step 16000]================
+[step 17000]=================
+[step 18000]==================
+[step 19000]===================
+[step 20000]====================
+train acc: 0.8639922811444688
+============== EVALUATION ON DEV DATA ==============
+loss: 13165.46, precision: 0.5413, recall: 0.4715, f1 score: 0.5040
+============== EVALUATION ON TEST DATA ==============
+[testing performance] precision: 0.3156, recall: 0.3155, f1 score: 0.3156
+[best val] precision: 0.6134, recall: 0.6068, f1 score: 0.6101
+============== TRAIN ON THE 9-th EPOCH ==============
+[step 0]
+[step 1000]=
+[step 2000]==
+[step 3000]===
+[step 4000]====
+[step 5000]=====
+[step 6000]======
+[step 7000]=======
+[step 8000]========
+[step 9000]=========
+[step 10000]==========
+[step 11000]===========
+[step 12000]============
+[step 13000]=============
+[step 14000]==============
+[step 15000]===============
+[step 16000]================
+[step 17000]=================
+[step 18000]==================
+[step 19000]===================
+[step 20000]====================
+train acc: 0.8743459383233755
+============== EVALUATION ON DEV DATA ==============
+loss: 12402.84, precision: 0.5222, recall: 0.5192, f1 score: 0.5207
+============== EVALUATION ON TEST DATA ==============
+[testing performance] precision: 0.3510, recall: 0.3237, f1 score: 0.3368
+[best val] precision: 0.6134, recall: 0.6068, f1 score: 0.6101
+============== TRAIN ON THE 10-th EPOCH ==============
+[step 0]
+[step 1000]=
+[step 2000]==
+[step 3000]===
+[step 4000]====
+[step 5000]=====
+[step 6000]======
+[step 7000]=======
+[step 8000]========
+[step 9000]=========
+[step 10000]==========
+[step 11000]===========
+[step 12000]============
+[step 13000]=============
+[step 14000]==============
+[step 15000]===============
+[step 16000]================
+[step 17000]=================
+[step 18000]==================
+[step 19000]===================
+[step 20000]====================
+train acc: 0.8856397125221113
+============== EVALUATION ON DEV DATA ==============
+loss: 10581.48, precision: 0.5480, recall: 0.5273, f1 score: 0.5374
+============== EVALUATION ON TEST DATA ==============
+[testing performance] precision: 0.3314, recall: 0.2996, f1 score: 0.3147
+[best val] precision: 0.6134, recall: 0.6068, f1 score: 0.6101
