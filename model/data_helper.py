@@ -37,28 +37,22 @@ def load_datas(json_files, val_portion=0.0, load_vertices=True):
 def load_data(json_file, val_portion=0.0, load_vertices=True):
     return load_datas([json_file], val_portion, load_vertices)
 
-def split_wiki_data(data, dev_relation, test_relation):
-    train_data, dev_data, test_data = [], [], []
+def split_wiki_data(data, test_relation):
+    train_data, test_data = [], []
     for i in data:
         kbID = i['edgeSet'][0]['kbID']
-        if kbID not in dev_relation and kbID not in test_relation:
+        if kbID not in test_relation:
             train_data.append(i)
-        elif kbID in dev_relation:
-            dev_data.append(i)
         elif kbID in test_relation:
             test_data.append(i)
-    return train_data, dev_data, test_data
+    return train_data, test_data
 
-def generate_attribute(train_label, dev_label, test_label, att_dim=1024, prop_list_path='../resources/property_list.html'):
+def generate_attribute(train_label, test_label, att_dim=1024, prop_list_path='../resources/property_list.html'):
     from sentence_transformers import SentenceTransformer
     property2idx = {}
     idx2property = {}
     idx = 0
     for i in set(train_label): 
-        property2idx[i] = idx
-        idx2property[idx] = i
-        idx += 1
-    for i in set(dev_label):
         property2idx[i] = idx
         idx2property[idx] = i
         idx += 1
@@ -137,7 +131,7 @@ class WikiDataset(Dataset):
         self.property2idx = property2idx
         self.len = len(self.data)
         self.tokenizer = BertTokenizer.from_pretrained(
-    'bert-base-uncased', do_lower_case=True)
+    'bert-base-cased', do_lower_case=False)
     
     def __getitem__(self, idx):
         g = self.data[idx]
@@ -173,7 +167,7 @@ class FewRelDataset(Dataset):
         self.property2idx = property2idx
         self.len = len(data)
         self.tokenizer = BertTokenizer.from_pretrained(
-    'bert-base-uncased', do_lower_case=True)
+    'bert-base-cased', do_lower_case=False)
     
     def __getitem__(self, idx):
         g = self.data[idx]

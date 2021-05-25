@@ -32,14 +32,7 @@ random.seed(args.seed)
 with open('../data/fewrel_all.json') as f:
     raw_train = json.load(f)
 
-# random sample k unseen classes for dev/test
-dev_keys = random.sample(list(raw_train.keys()), k=5)
-dev_values = [raw_train[k] for k in dev_keys]
-dev_keys_else = set(raw_train.keys()) - set(dev_keys)
-dev_values_else = [raw_train[k] for k in dev_keys_else]
-raw_dev = dict(zip(dev_keys, dev_values))
-
-raw_train = dict(zip(dev_keys_else, dev_values_else))
+# random sample k unseen classes for test
 test_keys = random.sample(list(raw_train.keys()), k=args.m)
 test_values = [raw_train[k] for k in test_keys]
 raw_test = dict(zip(test_keys, test_values))
@@ -53,12 +46,6 @@ for k, v in raw_train.items():
         i['relation'] = k
         training_data.append(i)
 
-validation_data = []
-for k, v in raw_dev.items():
-    for i in v:
-        i['relation'] = k
-        validation_data.append(i)
-
 test_data = []
 for k, v in raw_test.items():
     for i in v:
@@ -66,21 +53,17 @@ for k, v in raw_test.items():
         test_data.append(i)
 
 train_label = list(raw_train.keys())
-dev_label = list(raw_dev.keys())
 test_label = list(raw_test.keys())
 print('there are {} kinds of relation in train.'.format(len(set(train_label))))
-print('there are {} kinds of relation in dev.'.format(len(set(dev_label))))
 print('there are {} kinds of relation in test.'.format(len(set(test_label))))
-print('number of union of train and dev: {}'.format(len(set(train_label) & set(dev_label))))
-print('number of union of dev and test: {}'.format(len(set(dev_label) & set(test_label))))
 print('number of union of train and test: {}'.format(len(set(train_label) & set(test_label))))
 
-property2idx, idx2property, pid2vec = data_helper.generate_attribute(train_label, dev_label, test_label, att_dim=1024)
+property2idx, idx2property, pid2vec = data_helper.generate_attribute(train_label, test_label, att_dim=1024)
+
 print(len(training_data))
-print(len(validation_data))
 print(len(test_data))
 
-bertconfig = BertConfig.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad',
+bertconfig = BertConfig.from_pretrained('bert-large-cased',
                                         num_labels=len(set(train_label)),
                                         finetuning_task='fewrel-zero-shot')
 bertconfig.relation_emb_dim = 1024
@@ -88,7 +71,7 @@ bertconfig.margin = args.gamma
 bertconfig.alpha = args.alpha
 bertconfig.dist_func = args.dist_func
 
-model = ZSBert.from_pretrained('bert-large-uncased-whole-word-masking-finetuned-squad', config=bertconfig)
+model = ZSBert.from_pretrained('bert-large-cased', config=bertconfig)
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print("device:", device)
@@ -97,23 +80,8 @@ model = model.to(device)
 trainset = data_helper.FewRelDataset('train', training_data, pid2vec, property2idx)
 trainloader = DataLoader(trainset, batch_size=args.batch_size, collate_fn=data_helper.create_mini_batch,shuffle=True)
 
-val_y_attr, val_y = [], []
 test_y_attr, test_y = [], []
-val_idxmap, test_idxmap = {}, {}
-
-for i, dev in enumerate(validation_data):
-    label = int(property2idx[dev['relation']])
-    val_y.append(label)
-    val_idxmap[i] = label
-
-for i in set(dev_label):
-    val_y_attr.append(pid2vec[i])
-
-val_y_attr = np.array(val_y_attr)
-val_y = np.array(val_y)
-
-print(val_y_attr.shape)
-print(val_y.shape)
+test_idxmap = {}
 
 for i, test in enumerate(test_data):
     label = int(property2idx[test['relation']])
@@ -128,10 +96,6 @@ test_y = np.array(test_y)
 
 print(test_y_attr.shape)
 print(test_y.shape)
-
-devset = data_helper.FewRelDataset('dev', validation_data, pid2vec, property2idx)
-devloader = DataLoader(devset, batch_size=256, 
-                        collate_fn=data_helper.create_mini_batch)
 
 testset = data_helper.FewRelDataset('test', test_data, pid2vec, property2idx)
 testloader = DataLoader(testset, batch_size=256, 
@@ -168,19 +132,14 @@ for epoch in range(args.epochs):
         if step % 1000 == 0:
             print(f'[step {step}]' + '=' * (step//1000))
 
-    print('============== EVALUATION ON DEV DATA ==============')
-    preds = extract_relation_emb(model, devloader).cpu().numpy()
-    p, r, f1 = evaluate(preds, val_y_attr, val_y, val_idxmap, len(set(train_label)), args.dist_func)
-    print(f'loss: {running_loss:.2f}, precision: {p:.4f}, recall: {r:.4f}, f1 score: {f1:.4f}')
-
     print('============== EVALUATION ON TEST DATA ==============')
     preds = extract_relation_emb(model, testloader).cpu().numpy()
-    pt, rt, f1t = evaluate(preds, test_y_attr, test_y, test_idxmap, len(set(train_label))+len(set(dev_label)), args.dist_func)
+    pt, rt, f1t = evaluate(preds, test_y_attr, test_y, test_idxmap, len(set(train_label)), args.dist_func)
     print(f'[testing performance] precision: {pt:.4f}, recall: {rt:.4f}, f1 score: {f1t:.4f}')
 
-    if f1 > best_f1:
-        best_p = p
-        best_r = r
-        best_f1 = f1
+    if f1t > best_f1:
+        best_p = pt
+        best_r = rt
+        best_f1 = f1t
         torch.save(model, f'best_f1_{best_f1}_fewrel_epoch_{epoch}_m_{args.m}_alpha_{args.alpha}_gamma_{args.gamma}')
-    print(f'[best val] precision: {best_p:.4f}, recall: {best_r:.4f}, f1 score: {best_f1:.4f}')
+    print(f'[best] precision: {best_p:.4f}, recall: {best_r:.4f}, f1 score: {best_f1:.4f}')
